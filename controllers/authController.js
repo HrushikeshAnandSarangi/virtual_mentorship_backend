@@ -1,5 +1,7 @@
 const { supabase } = require('../config/supabase');
 const { ApiError } = require('../middleware/errorHandler');
+
+// Registration controller
 const register = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -19,6 +21,8 @@ const register = async (req, res, next) => {
     next(error);
   }
 };
+
+// Login controller
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -30,20 +34,37 @@ const login = async (req, res, next) => {
 
     if (error) throw new ApiError(error.message, 401);
 
+    const token = data.session.access_token;
+
+    // Set HTTP-only cookie
+    res.cookie('authToken', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 3600000, // 1 hour
+    });
+
+    // Send response
     res.status(200).json({
       message: 'Login successful',
       user: data.user,
       session: data.session,
+      token
     });
   } catch (error) {
     next(error);
   }
 };
+
+// Logout controller
 const logout = async (req, res, next) => {
   try {
     const { error } = await supabase.auth.signOut();
 
     if (error) throw new ApiError(error.message, 400);
+
+    // Clear the authToken cookie
+    res.clearCookie('authToken', { path: '/' });
 
     res.status(200).json({ message: 'Logout successful' });
   } catch (error) {
