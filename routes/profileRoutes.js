@@ -20,5 +20,8 @@ router.get('/:id', getProfile);
 
 // Update current user's profile
 router.put('/me', authenticateUser, validateProfileUpdate, validate, updateProfile);
+router.get('/auth/status', authenticateUser, (req, res) => {
+  res.status(200).json({ isAuthenticated: true, user: req.user });
+});
 
 module.exports = router;
