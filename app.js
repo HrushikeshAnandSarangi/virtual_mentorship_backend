@@ -14,7 +14,10 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: '*',  // <-- your client
+  credentials: true                  // <-- allow cookies
+}));
 app.use(express.json());
 app.use(morgan('dev')); // Logging
 
