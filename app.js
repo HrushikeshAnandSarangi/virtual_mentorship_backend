@@ -15,7 +15,7 @@ const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors({
-  origin: '*',  // <-- your client
+  origin: 'http://localhost:5000',  // <-- your client
   credentials: true                  // <-- allow cookies
 }));
 app.use(express.json());
